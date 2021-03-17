@@ -1,0 +1,87 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: restore-${SITE_NAME_HYPHEN}
+  annotations:
+    vault.banzaicloud.io/vault-addr: "https://vaultino.vault-infra.svc:8200"
+    vault.security.banzaicloud.io/vault-tls-secret: "vault-tls"
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      imagePullSecrets:
+      - name: registry-business-business
+      serviceAccountName: ${SITE_NAME_HYPHEN}
+      securityContext: {}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: ${SITE_NAME_HYPHEN}-configmap
+        - name: wp-uploads-${SITE_NAME_HYPHEN}
+          persistentVolumeClaim:
+            claimName: wp-uploads-${SITE_NAME_HYPHEN}
+        - emptyDir:
+            medium: Memory
+          name: vault-env
+        - name: vault-tls
+          secret:
+            secretName: vault-tls
+      initContainers:
+      - name: copy-vault-env
+        command:
+        - sh
+        - -c
+        - cp /usr/local/bin/vault-env /vault/
+        image: banzaicloud/vault-env:latest
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - mountPath: /vault/
+          name: vault-env
+      containers:
+        - name: ${SITE_NAME_HYPHEN}-restorebackup
+          env:
+            - name: VAULT_ADDR
+              value: https://vaultino.vault-infra.svc.cluster.local:8200
+            - name: VAULT_SKIP_VERIFY
+              value: "false"
+            - name: VAULT_PATH
+              value: kubernetes
+            - name: VAULT_ROLE
+              value: default
+            - name: VAULT_IGNORE_MISSING_SECRETS
+              value: "false"
+            - name: VAULT_CACERT
+              value: /vault/tls/ca.crt
+            - name: DATABASE_HOST
+              value: "${SITE_NAME_HYPHEN}-mysql.wordpress.svc"
+            - name: DATABASE_USER
+              value: "vault:secret/data/mysql/${SITE_NAME_HYPHEN}#user"
+            - name: DATABASE_NAME
+              value: "vault:secret/data/mysql/${SITE_NAME_HYPHEN}#name"
+            - name: DATABASE_PASS
+              value: "vault:secret/data/mysql/${SITE_NAME_HYPHEN}#pass"
+            - name: BUCKET
+              value: "hostkraken-backup"
+            - name: AWS_ACCESS_KEY_ID
+              value: "vault:secret/data/backup-secret#access_key"
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "vault:secret/data/backup-secret#secret_key"
+            - name: SITE_NAME
+              value: ${SITE_NAME}
+            - name: RESTOREPOINT
+              value: ${RESTOREPOINT}
+          volumeMounts:
+          - name: config-volume
+            mountPath: /configs
+          - name: wp-uploads-${SITE_NAME_HYPHEN}
+            mountPath: /content
+          - mountPath: /vault/
+            name: vault-env
+          - mountPath: /vault/tls/ca.crt
+            name: vault-tls
+            subPath: ca.crt
+          securityContext: {}
+          image: "registry.digitalocean.com/business-business/restoresite:latest"
+          imagePullPolicy: Always
+          args:
+          - /bin/restore-site ${SITE_NAME_HYPHEN}
