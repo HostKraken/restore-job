@@ -2,7 +2,7 @@
 DATETIME=`date +%y%m%d-%H_%M_%S`
 SRC=$BUCKET
 for i in $(/vault/vault-env env | grep DATABASE); do export $i; done
-
+export RESTOREDATE=$RESTOREPOINT
 
 echo "Beginning restore for $SITE_NAME at $DATETIME"
 echo "Retrieving backups from restore point at $RESTOREDATE"
