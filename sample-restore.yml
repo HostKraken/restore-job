@@ -1,7 +1,7 @@
 apiVersion: hostkraken.com/v1
 kind: RestoreJob
 metadata:
-  name: restore-mosublo-com-03182021
+  name: restore-domain-com-yyyymmdd #replace this but keep the structure like this, no dots allowed
 spec:
   domain: domain.com
   restorepoint: yyyy-mm-dd
