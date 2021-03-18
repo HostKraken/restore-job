@@ -27,7 +27,6 @@ echo "Restoring $UPLOADS_FILE to domain $SITE_NAME"
 tar xzvf $UPLOADS_RESTORE_FILE --strip-components=4 -C /content
 echo "Uploads for $SITE_NAME restored."
 
-echo 'Done!'
+echo 'Done'
 
 #sleep 3;
-done
