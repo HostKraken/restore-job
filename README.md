@@ -2,14 +2,6 @@
 
 To use this job, you need a valid kubeconfig for the cluster to be in the usual place.
 
-Then, simply execute the following command:
+Next, create a copy of sample-restore.yml and replace the domain and datestamp with valid values.
 
-`./do-restore.sh DOMAIN DATE`
-
-Where DATE is a date in yyyy-mm-dd format.
-
-e.g.
-
-`./do-restore.sh gpuckett.me 2021-03-17`
-
-
+Then, kubectl -f sample-restore.yml
