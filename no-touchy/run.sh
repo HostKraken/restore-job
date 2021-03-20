@@ -29,4 +29,6 @@ echo "Uploads for $SITE_NAME restored."
 
 echo 'Done'
 
+python3 /delete.py
+
 #sleep 3;
