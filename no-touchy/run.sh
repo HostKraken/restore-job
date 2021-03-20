@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 DATETIME=`date +%y%m%d-%H_%M_%S`
 SRC=$BUCKET
 for i in $(/vault/vault-env env | grep DATABASE); do export $i; done
@@ -29,6 +29,6 @@ echo "Uploads for $SITE_NAME restored."
 
 echo 'Done'
 
-python3 /delete.py
+/vault/vault-env python3 /delete.py
 
 #sleep 3;
