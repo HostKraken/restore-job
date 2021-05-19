@@ -1,0 +1,7 @@
+apiVersion: hostkraken.com/v1
+kind: RestoreJob
+metadata:
+  name: restore-gpuckett-me-2021-03-18 #replace this but keep the structure like this, no dots allowed
+spec:
+  domain: gpuckett.me
+  restorepoint: 2021-03-18

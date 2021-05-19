@@ -1,17 +1,17 @@
 #!/bin/bash 
 DATETIME=`date +%y%m%d-%H_%M_%S`
 SRC=$BUCKET
-for i in $(/vault/vault-env env | grep DATABASE); do export $i; done
+for i in $(env | grep DATABASE); do export $i; done
 export RESTOREDATE=$RESTOREPOINT
 
 echo "Beginning restore for $SITE_NAME at $DATETIME"
 echo "Retrieving backups from restore point at $RESTOREDATE"
 
-export DATABASE_FILE=`/vault/vault-env s3cmd -c /root/.s3cfg ls s3://$SRC/$SITE_NAME/ | grep database | grep "$RESTOREDATE" | awk '{print $4}'`
-export UPLOADS_FILE=`/vault/vault-env s3cmd -c /root/.s3cfg ls s3://$SRC/$SITE_NAME/ | grep uploads | grep "$RESTOREDATE" | awk '{print $4}'`
+export DATABASE_FILE=`s3cmd -c /root/.s3cfg ls s3://$SRC/$SITE_NAME/ | grep database | grep "$RESTOREDATE" | awk '{print $4}'`
+export UPLOADS_FILE=`s3cmd -c /root/.s3cfg ls s3://$SRC/$SITE_NAME/ | grep uploads | grep "$RESTOREDATE" | awk '{print $4}'`
 
-/vault/vault-env s3cmd -c /root/.s3cfg get $DATABASE_FILE
-/vault/vault-env s3cmd -c /root/.s3cfg get $UPLOADS_FILE
+s3cmd -c /root/.s3cfg get $DATABASE_FILE
+s3cmd -c /root/.s3cfg get $UPLOADS_FILE
 
 export DATABASE_RESTORE_FILE=`ls | grep database`
 export UPLOADS_RESTORE_FILE=`ls | grep uploads`
@@ -29,6 +29,6 @@ echo "Uploads for $SITE_NAME restored."
 
 echo 'Done'
 
-/vault/vault-env python3 /delete.py
+python3 /delete.py
 
 #sleep 3;

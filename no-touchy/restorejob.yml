@@ -3,7 +3,7 @@ kind: Job
 metadata:
   name: restore-${SITE_NAME_HYPHEN}
   annotations:
-    vault.banzaicloud.io/vault-addr: "https://vaultino.vault-infra.svc:8200"
+    vault.banzaicloud.io/vault-addr: "https://vault.default:8200"
     vault.security.banzaicloud.io/vault-tls-secret: "vault-tls"
 spec:
   template:
@@ -26,40 +26,26 @@ spec:
         - name: vault-tls
           secret:
             secretName: vault-tls
-      initContainers:
-      - name: copy-vault-env
-        command:
-        - sh
-        - -c
-        - cp /usr/local/bin/vault-env /vault/
-        image: banzaicloud/vault-env:latest
-        imagePullPolicy: IfNotPresent
-        volumeMounts:
-        - mountPath: /vault/
-          name: vault-env
       containers:
         - name: ${SITE_NAME_HYPHEN}-restorebackup
           env:
-            - name: VAULT_ADDR
-              value: https://vaultino.vault-infra.svc.cluster.local:8200
-            - name: VAULT_SKIP_VERIFY
-              value: "false"
-            - name: VAULT_PATH
-              value: kubernetes
-            - name: VAULT_ROLE
-              value: default
-            - name: VAULT_IGNORE_MISSING_SECRETS
-              value: "false"
-            - name: VAULT_CACERT
-              value: /vault/tls/ca.crt
             - name: DATABASE_HOST
               value: "${SITE_NAME_HYPHEN}-mysql.wordpress.svc"
             - name: DATABASE_USER
-              value: "vault:secret/data/mysql/${SITE_NAME_HYPHEN}#user"
+              valueFrom:
+              secretKeyRef:
+                name: ${SITE_NAME_HYPHEN}-db-creds-secret
+                key: user
             - name: DATABASE_NAME
-              value: "vault:secret/data/mysql/${SITE_NAME_HYPHEN}#name"
+              valueFrom:
+              secretKeyRef:
+                name: ${SITE_NAME_HYPHEN}-db-creds-secret
+                key: name
             - name: DATABASE_PASS
-              value: "vault:secret/data/mysql/${SITE_NAME_HYPHEN}#pass"
+              valueFrom:
+              secretKeyRef:
+                name: ${SITE_NAME_HYPHEN}-db-creds-secret
+                key: pass
             - name: BUCKET
               value: "hostkraken-backup"
             - name: AWS_ACCESS_KEY_ID

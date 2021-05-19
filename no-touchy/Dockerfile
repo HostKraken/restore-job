@@ -1,4 +1,4 @@
-FROM registry.digitalocean.com/business-business/wordpress-base:latest
+FROM registry.hostkraken.com/wordpress-base:latest
 RUN apk update && apk add python3
 RUN apk add --update coreutils && rm -rf /var/cache/apk/*
 RUN pip3 install s3cmd kubernetes
