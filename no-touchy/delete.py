@@ -12,8 +12,8 @@ configuration.api_key['authorization'] = os.getenv('KUBE_TOKEN')# Uncomment belo
 configuration.api_key_prefix['authorization'] = 'Bearer'
 
 # Defining host is optional and default to http://localhost
-configuration.host = "https://1e4bb5fd-505e-4795-a4a8-bca4e2c7e55d.k8s.ondigitalocean.com"
-configuration.user = "do-nyc3-snug-cluster-admin"
+configuration.host = "10.13.37.2"
+configuration.user = "kubernetes-admin"
 configuration.verify_ssl = False
 
 # Enter a context with an instance of the API kubernetes.client
