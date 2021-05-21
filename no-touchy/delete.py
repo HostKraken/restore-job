@@ -12,7 +12,7 @@ configuration.api_key['authorization'] = os.getenv('KUBE_TOKEN')# Uncomment belo
 configuration.api_key_prefix['authorization'] = 'Bearer'
 
 # Defining host is optional and default to http://localhost
-configuration.host = "10.13.37.2"
+configuration.host = "https://10.13.37.2:6443"
 configuration.user = "kubernetes-admin"
 configuration.verify_ssl = False
 
