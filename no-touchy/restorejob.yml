@@ -49,9 +49,15 @@ spec:
             - name: BUCKET
               value: "hostkraken-backup"
             - name: AWS_ACCESS_KEY_ID
-              value: "vault:secret/data/backup-secret#access_key"
+              valueFrom:
+              secretKeyRef:
+                name: hostkraken-backup
+                key: AWS_ACCESS_KEY_ID
             - name: AWS_SECRET_ACCESS_KEY
-              value: "vault:secret/data/backup-secret#secret_key"
+              valueFrom:
+              secretKeyRef:
+                name: hostkraken-backup
+                key: AWS_SECRET_ACCESS_KEY
             - name: SITE_NAME
               value: ${SITE_NAME}
             - name: RESTOREPOINT
