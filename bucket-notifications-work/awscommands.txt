@@ -1,0 +1,14 @@
+- aws configure
+
+- instead of 'default' in the arn use objectkraken
+- https://ceph.io/en/news/blog/2021/bucket-notifications-with-knative-and-rook-on-minikube/
+
+Mostly follow the above
+
+Set default region to objectkraken
+
+from within the aws runner pod:
+
+aws --endpoint-url http://rook-ceph-rgw-objectkraken:80 sns create-topic --name=restoretopic --attributes='{"push-endpoint": "http://router.fission.svc.cluster.local/restorefunction"}'
+
+aws --endpoint-url http://rook-ceph-rgw-objectkraken:80 s3api put-bucket-notification-configuration --bucket hostkraken-backup --notification-configuration='{"TopicConfigurations": [{"Id": "notif1", "TopicArn": "arn:aws:sns:objectkraken::restoretopic", "Events": ["s3:ObjectCreated:*"]}]}'

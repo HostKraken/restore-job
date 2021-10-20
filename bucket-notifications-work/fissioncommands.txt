@@ -1,0 +1,6 @@
+zip -jr restore-bucket.zip function.py
+
+fission function delete --name restorefunction
+
+fission function create --name restorefunction --pkg bucket-restore --entrypoint "function.main" --method POST --url
+/restorefunction
