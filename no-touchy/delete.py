@@ -8,7 +8,13 @@ import os
 
 configuration = kubernetes.client.Configuration()
 # Configure API key authorization: BearerToken
-configuration.api_key['authorization'] = os.getenv('KUBE_TOKEN')# Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+kubetoken = ""
+target_namespace = ""
+with open('/var/run/secrets/kubernetes.io/serviceaccount/token', 'r') as file:
+    kubetoken = file.read().rstrip()
+with open('/var/run/secrets/kubernetes.io/serviceaccount/namespace') as file:
+    target_namespace = file.read().rstrip()    
+configuration.api_key['authorization'] = kubetoken # Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
 configuration.api_key_prefix['authorization'] = 'Bearer'
 
 # Defining host is optional and default to http://localhost
@@ -22,7 +28,7 @@ with kubernetes.client.ApiClient(configuration) as api_client:
     api_instance = kubernetes.client.CustomObjectsApi(api_client)
     group = 'hostkraken.com' # str | the custom resource's group
 version = 'v1' # str | the custom resource's version
-namespace = 'wordpress' # str | The custom resource's namespace
+namespace = target_namespace # str | The custom resource's namespace
 plural = 'restorejobs' # str | the custom resource's plural name. For TPRs this would be lowercase plural kind.
 name = os.getenv('JOB_TO_DELETE') # str | the custom object's name
 grace_period_seconds = 0 # int | The duration in seconds before the object should be deleted. Value must be non-negative integer. The value zero indicates delete immediately. If this value is nil, the default grace period for the specified type will be used. Defaults to a per object value if not specified. zero means delete immediately. (optional)
