@@ -9,6 +9,21 @@ def restore_site(key, domain, archive_type):
     current_app.logger.info("Restoring "+archive_type+" for site: "+domain )
     if archive_type == "database":
       current_app.logger.info("Do databasey things here")
+      aws_access_key=os.environ['aws_access_key']
+      aws_secret_key=os.environ['aws_secret_key']
+      s3 = boto3.client('s3',
+                        endpoint_url="http://rook-ceph-rgw-objectkraken.rook-ceph.svc:80",
+                        aws_access_key_id=aws_access_key,
+                        aws_secret_access_key=aws_secret_key)
+#      obj = s3.get_object(Bucket='hostkraken-backup',Key=key)
+#      dbfile = BytesIO(obj['Body'].read())
+#      outfile = db.sql.gz
+#      with open(outfile, 'w') as deebs:
+#        deebs.write(dbfile)
+#        deebs.close()
+#      output = os.stat(outfile) 
+#      output = length(dbfile)
+#      current_app.logger.info("DB file size: " + output + " bytes")
     if archive_type == "uploads":
       current_app.logger.info("Do uploadey things here")
 

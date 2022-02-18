@@ -18,7 +18,7 @@ configuration.api_key['authorization'] = kubetoken # Uncomment below to setup pr
 configuration.api_key_prefix['authorization'] = 'Bearer'
 
 # Defining host is optional and default to http://localhost
-configuration.host = "https://10.13.37.2:6443"
+configuration.host = "https://kubernetes.default"
 configuration.user = "kubernetes-admin"
 configuration.verify_ssl = False
 
